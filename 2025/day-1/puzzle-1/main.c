@@ -1,5 +1,13 @@
 #include <stdio.h>
 
+#define LEFT  'L'
+#define RIGHT 'R'
+
+void apply_rotation(int rotation, int *dial) {
+  // Dial has values 0..99 with wrap-around. Analogous to modulo 100.
+  *dial = (*dial + rotation) % 100;
+}
+
 int main() {
   // Load puzzle input (a rotation sequence).
   FILE *input = fopen("input.txt", "r");
@@ -10,39 +18,63 @@ int main() {
     return 1;
   }
 
-  /*
-   * A safe has a dial 0..99. The dial starts at 50.
-   */
+  // The door has a dial 0..99. The dial starts at 50.
   int dial = 50;
 
-  // The direction in which the dial is turned (L or R).
+  // The direction in which the dial is turned.
   char direction;
 
   // How much the dial is moved by.
   int magnitude;
 
-  // Read and apply each rotation line from the puzzle input.
+  // The password is the number of times the dial is at 0.
+  int password = 0;
+
+  // Current line or rotation.
   int line = 1;
 
+  // Read and apply each rotation from the puzzle input.
   while (!feof(input)) {
     int count = fscanf(input, "%c%d\n", &direction, &magnitude);
 
     // Both a direction and magnitude must be read.
     if (count != 2) {
-      printf("Missing direction or magnitude on line %d!\n", line);
+      printf("Missing direction or magnitude! (line:%d)\n", line);
       fclose(input);
       return 1;
     }
 
-    printf("%c", direction);
-    printf(" with %d\n", magnitude);
+    // Only accepted directions are 'L' and 'R'.
+    if (direction != LEFT && direction != RIGHT) {
+      printf("A direction must be either '%c' or '%c'! (line:%d)\n", LEFT, RIGHT, line);
+      fclose(input);
+      return 1;
+    }
+
+    switch (direction) {
+      // Negative.
+      case LEFT:
+        apply_rotation(-magnitude, &dial);
+        break;
+
+      // Positive.
+      case RIGHT:
+        apply_rotation(magnitude, &dial);
+        break;
+    }
+
+    // Does the dial point at 0?
+    if (dial == 0)
+      password++;
 
     line++;
   }
 
   fclose(input);
 
-  // Return the value of dial after applying all rotations.
-  return dial;
+  // Print the password after applying all rotations.
+  printf("The password to open the door is %d!\n", password);
+
+  return 0;
 }
 
