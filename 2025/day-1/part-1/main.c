@@ -10,7 +10,7 @@ void apply_rotation(int rotation, int *dial) {
 
 int main() {
   // Load puzzle input (a rotation sequence).
-  FILE *input = fopen("input.txt", "r");
+  FILE *input = fopen("../input.txt", "r");
 
   // Did the file load successfully?
   if (input == NULL) {
