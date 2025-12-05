@@ -8,13 +8,18 @@ void apply_rotation(int rotation, int *dial) {
   *dial = (*dial + rotation) % 100;
 }
 
-int main() {
+int main(int argc, char **argv) {
+  if (argc != 2) {
+    printf("Usage: %s <path-to-puzzle-input>\n", argv[0]);
+    return 1;
+  }
+
   // Load puzzle input (a rotation sequence).
-  FILE *input = fopen("../input.txt", "r");
+  FILE *input = fopen(argv[1], "r");
 
   // Did the file load successfully?
   if (input == NULL) {
-    printf("Failed to load puzzle input!\n");
+    printf("Failed to load puzzle input! (file:%s)\n", argv[1]);
     return 1;
   }
 
