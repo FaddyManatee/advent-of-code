@@ -5,7 +5,7 @@
 
 void apply_rotation(int rotation, int *dial) {
   // Dial has values 0..99 with wrap-around. Analogous to modulo 100.
-  *dial = (*dial + rotation) % 100;
+  *dial = ((*dial + rotation) % 100 + 100) % 100;
 }
 
 int main(int argc, char **argv) {
