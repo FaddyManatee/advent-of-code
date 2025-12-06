@@ -1,6 +1,9 @@
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-int count_digits(long n) {
+int count_digits(int64_t n) {
   if (n == 0) return 1;
 
   int count = 0;
@@ -13,8 +16,8 @@ int count_digits(long n) {
   return count;
 }
 
-long same_length_bounds(long lower, long upper, int n_digits) {
-  long sum = 0;
+int64_t same_length_bounds(int64_t lower, int64_t upper, int n_digits) {
+  int64_t sum = 0;
 
   // Which integers split n_digits into groups of equal size?
   int n_groups;
@@ -22,14 +25,48 @@ long same_length_bounds(long lower, long upper, int n_digits) {
     if (n_digits % n_groups != 0) continue;
     
     int size = n_digits / n_groups;
-    
-    printf("%d -> %d groups of size %d\n", n_digits, n_groups, size);
+
+    // Get string representations of interval bounds.
+    char lower_string[n_digits + 1];
+    char upper_string[n_digits + 1];
+
+    snprintf(lower_string, sizeof(lower_string), "%ld", lower);
+    snprintf(upper_string, sizeof(upper_string), "%ld", upper);
+
+    // The first group is the repeating pattern (first 'size' digits). 
+    char    pattern_string[size + 1];
+    int64_t pattern_value;
+
+    strncpy(pattern_string, lower_string, size);
+    pattern_string[size] = '\0';
+    pattern_value = strtoll(pattern_string, NULL, 10);
+
+    printf("%d -> %d groups of size %d (%ld)\n", n_digits, n_groups, size, pattern_value);
+
+    // Generate a candidate ID (pattern repeated n_groups times).
+    char    candidate_string[n_digits + 1];
+    int64_t candidate_value;
+
+    int x;
+    strcpy(candidate_string, pattern_string);
+    for (x = 0; x < n_groups - 1; ++x)
+      strcat(candidate_string, pattern_string);
+    candidate_string[n_digits] = '\0';
+    candidate_value = strtoll(candidate_string, NULL, 10);
+
+    // If the candidate ID is within the interval, it is invalid!
+    if (candidate_value >= lower && candidate_value <= upper) {
+      printf("Accepted: %ld\n", candidate_value);
+      sum += candidate_value;
+    }
+    else
+      printf("Rejected: %ld\n", candidate_value);
   }
 
   return sum;
-} 
+}
 
-long sum_invalid_ids(long lower, long upper) {
+int64_t sum_invalid_ids(int64_t lower, int64_t upper) {
   // Get number of digits in each bound.
   int n_digits_lower = count_digits(lower);
   int n_digits_upper = count_digits(upper);
@@ -39,7 +76,6 @@ long sum_invalid_ids(long lower, long upper) {
 
   else
     return 0;
-
 }
 
 int main(int argc, char **argv) {
@@ -48,7 +84,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  // Load puzzle input (a sequence of ID ranges).
+  // Load puzzle input (a sequence of ID intervals).
   FILE *input = fopen(argv[1], "r");
 
   // Did the file load successfully?
@@ -58,15 +94,15 @@ int main(int argc, char **argv) {
   }
 
   // Lower bound.
-  long lower;
+  int64_t lower;
   
   // Upper bound.
-  long upper;
+  int64_t upper;
 
   // Sum of all invalid IDs.
-  long sum = 0;
+  int64_t sum = 0;
 
-  // Read one range from the file at a time and process it.
+  // Read one interval from the file at a time and process it.
   while (!feof(input)) {
     int count = fscanf(input, "%ld-%ld", &lower, &upper);
 
@@ -77,16 +113,21 @@ int main(int argc, char **argv) {
       return 1;
     }
 
-    // Consume the comma delimiter or new line.
+    if (lower > upper) {
+      printf("Invalid interval! (%ld-%ld)\n", lower, upper);
+      fclose(input);
+      return 1;
+    }
+
+    // Consume the comma delimiter or new line character.
     char c = fgetc(input);
     if (c == '\n') break;
 
-    printf("Range: %ld-%ld\n", lower, upper);
+    printf("Interval: %ld-%ld\n", lower, upper);
 
     sum += sum_invalid_ids(lower, upper);
 
     break;
-    //printf("\n\n");
   }
 
   fclose(input);
