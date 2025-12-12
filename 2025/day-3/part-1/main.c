@@ -1,6 +1,10 @@
 #include <ctype.h>
 #include <stdio.h>
 
+int char_to_int(char c) {
+  return c - 48;
+}
+
 int main(int argc, char **argv) {
    if (argc != 2) {
     printf("Usage: %s <path-to-puzzle-input>\n", argv[0]);
@@ -44,14 +48,14 @@ int main(int argc, char **argv) {
       return 1;
     }
 
-    int power = c - 48;
+    int power = char_to_int(c);
 
     if (power > bat_1) {
       // 'Peek' the next character in the file stream.
       char next = getc(input);
 
       if (next == '\n' || next == EOF) {
-      // Digit is the last in the bank. Cannot be assigned to 'bat_1'.
+        // Digit is the last in the bank. Cannot be assigned to 'bat_1'.
         bat_2 = power;
       }
       else {
