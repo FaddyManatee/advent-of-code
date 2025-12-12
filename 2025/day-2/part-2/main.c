@@ -60,8 +60,8 @@ uint64_t same_length_bounds(uint64_t lower, uint64_t upper) {
     char lower_string[n_digits + 1];
     char upper_string[n_digits + 1];
 
-    snprintf(lower_string, sizeof(lower_string), "%ld", lower);
-    snprintf(upper_string, sizeof(upper_string), "%ld", upper);
+    snprintf(lower_string, sizeof(lower_string), "%lu", lower);
+    snprintf(upper_string, sizeof(upper_string), "%lu", upper);
 
     // The first group is the repeating pattern (first 'size' digits). 
     char     pattern_string[size + 1];
@@ -77,7 +77,7 @@ uint64_t same_length_bounds(uint64_t lower, uint64_t upper) {
 
     do {
       if (!first)
-        snprintf(pattern_string, sizeof(pattern_string), "%ld", pattern_value);
+        snprintf(pattern_string, sizeof(pattern_string), "%lu", pattern_value);
       else
         first = 0;
 
@@ -94,12 +94,12 @@ uint64_t same_length_bounds(uint64_t lower, uint64_t upper) {
 
       // The candidate violates the upper bound. This pattern size is exhausted.
       if (candidate_value > upper) {
-        printf("    Rejected: %ld\n\n", candidate_value);
+        printf("    Rejected: %lu\n\n", candidate_value);
         break;
       }
       // The candidate violates the lower bound.
       else if (candidate_value < lower) {
-        printf("    Rejected: %ld\n", candidate_value);
+        printf("    Rejected: %lu\n", candidate_value);
         
         if   (count_digits(pattern_value + 1) > count_digits(pattern_value)) break;
         else pattern_value++;
@@ -108,7 +108,7 @@ uint64_t same_length_bounds(uint64_t lower, uint64_t upper) {
       else {
         // First check that the candidate has not already been accepted.
         if (size != 1 && is_same_char_string(candidate_string)) {
-          printf("    Rejected: %ld (duplicate)\n", candidate_value);
+          printf("    Rejected: %lu (duplicate)\n", candidate_value);
           
           if   (count_digits(pattern_value + 1) > count_digits(pattern_value)) break;
           else pattern_value++;
@@ -117,7 +117,7 @@ uint64_t same_length_bounds(uint64_t lower, uint64_t upper) {
         }
 
         if (n_groups == 2 && size > 2 && special_check(candidate_string)) {
-           printf("    Rejected: %ld (duplicate)\n", candidate_value);
+           printf("    Rejected: %lu (duplicate)\n", candidate_value);
           
           if   (count_digits(pattern_value + 1) > count_digits(pattern_value)) break;
           else pattern_value++;
@@ -125,7 +125,7 @@ uint64_t same_length_bounds(uint64_t lower, uint64_t upper) {
           continue; 
         }
 
-        printf("    Accepted: %ld\n", candidate_value);
+        printf("    Accepted: %lu\n", candidate_value);
         sum += candidate_value;
 
         if   (count_digits(pattern_value + 1) > count_digits(pattern_value)) break;
@@ -166,15 +166,15 @@ uint64_t different_length_bounds(uint64_t lower, uint64_t upper) {
       ;
     }
     else if (n_digits_l == n_digits_lower) {
-      printf("Sub-interval: %ld-%ld\n", lower, u);
+      printf("Sub-interval: %lu-%lu\n", lower, u);
       sum += same_length_bounds(lower, u);
     }
     else if (n_digits_l == n_digits_upper) {
-      printf("Sub-interval: %ld-%ld\n", l, upper);
+      printf("Sub-interval: %lu-%lu\n", l, upper);
       sum += same_length_bounds(l, upper);
     }
     else {
-      printf("Sub-interval: %ld-%ld\n", l, u);
+      printf("Sub-interval: %lu-%lu\n", l, u);
       sum += same_length_bounds(l, u);
     }
 
@@ -190,7 +190,7 @@ uint64_t sum_invalid_ids(uint64_t lower, uint64_t upper) {
   int n_digits_lower = count_digits(lower);
   int n_digits_upper = count_digits(upper);
 
-  printf("Interval: %ld-%ld\n", lower, upper);
+  printf("Interval: %lu-%lu\n", lower, upper);
 
   if (n_digits_lower == n_digits_upper)
     return same_length_bounds(lower, upper);
@@ -224,7 +224,7 @@ int main(int argc, char **argv) {
 
   // Read one interval from the file at a time and process it.
   while (!feof(input)) {
-    int count = fscanf(input, "%ld-%ld", &lower, &upper);
+    int count = fscanf(input, "%lu-%lu", &lower, &upper);
 
     // Both a lower and upper bound must be read.
     if (count != 2) {
@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
     }
 
     if (lower > upper) {
-      printf("Invalid interval! (%ld-%ld)\n", lower, upper);
+      printf("Invalid interval! (%lu-%lu)\n", lower, upper);
       fclose(input);
       return 1;
     }
@@ -250,7 +250,7 @@ int main(int argc, char **argv) {
   fclose(input);
 
   // Print the result.
-  printf("The sum of all invalid IDs equals %ld!\n", sum);
+  printf("The sum of all invalid IDs equals %lu!\n", sum);
 
   return 0;
 }
