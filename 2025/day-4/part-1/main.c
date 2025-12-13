@@ -9,30 +9,27 @@ int count_accessible(char grid[N][N]) {
   int row, col;
   for (row = 0; row < N; ++row) {
     for (col = 0; col < N; ++col) {
-      int count = 0;
-
       // We only care about cells with rolls of paper.
       if (grid[row][col] != PAPER) continue;
 
-      // Upper two corners.
-      if (row - 1 >= 0 && col - 1 >= 0 && grid[row - 1][col - 1] == PAPER) count++;
-      if (row - 1 >= 0 && col + 1 <  N && grid[row - 1][col + 1] == PAPER) count++;
-     
-      // Lower two corners.
-      if (row + 1 <  N && col - 1 >= 0 && grid[row + 1][col - 1] == PAPER) count++;
-      if (row + 1 <  N && col + 1 <  N && grid[row + 1][col + 1] == PAPER) count++;
-      
-      // Up.
-      if (row - 1 >= 0 && grid[row - 1][col] == PAPER) count++;
-      
-      // Down.
-      if (row + 1 <  N && grid[row + 1][col] == PAPER) count++;
-      
-      // Left.
-      if (col - 1 >= 0 && grid[row][col - 1] == PAPER) count++;
+      int count = 0;
 
-      // Right.
-      if (col + 1 <  N && grid[row][col + 1] == PAPER) count++;
+      int row_d, col_d;
+      for (row_d = -1; row_d <= 1; ++row_d) {
+        for (col_d = -1; col_d <= 1; ++col_d) {
+          if (row_d == 0 && col_d == 0)
+            continue;
+
+          int r = row + row_d;
+          int c = col + col_d;
+
+          if (r < 0 || r >= N || c < 0 || c >= N)
+            continue;
+
+          if (grid[r][c] == PAPER)
+            count++;
+        }
+      }
 
       // Less than four neighbouring rolls of paper. This one is accessible!
       if (count < 4) accessible++;
