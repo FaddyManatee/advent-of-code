@@ -41,9 +41,6 @@ int main(int argc, char **argv) {
   // Number of fresh ingredient IDs.
   int count = 0;
 
-  /* Read one interval from the file at a time and update bounds.
-   * We are creating a single, combined interval from multiple intervals.
-   */
   int x = 0;
   char line[64];
   while (fgets(line, sizeof(line), input)) {
@@ -76,7 +73,7 @@ int main(int argc, char **argv) {
     x++;
   }
 
-  // Count IDs within this aggregate interval (count fresh ingredients).
+  // Count IDs that fall within any of the intervals (count fresh ingredients).
   uint64_t id;
   while (fgets(line, sizeof line, input)) {
     if (sscanf(line, "%lu", &id) != 1) {
