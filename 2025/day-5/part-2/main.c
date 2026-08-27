@@ -4,7 +4,6 @@
 
 #include "list.h"
 
-
 int main(int argc, char **argv) {
   if (argc != 2) {
     printf("Usage: %s <path-to-puzzle-input>\n", argv[0]);

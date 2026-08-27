@@ -26,7 +26,7 @@ List *new_list() {
 }
 
 Interval get_interval(List *list, int index) {
-  if (is_empty(list)) 
+  if (is_empty(list) || index >= list->size) 
     return (Interval) { 0, 0 };
 
   Item *pointer = list->start;
