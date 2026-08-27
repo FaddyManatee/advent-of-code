@@ -133,12 +133,6 @@ int main(int argc, char **argv) {
       char *data      = get_data_2d_list(numbers, row, col, n_col);
       char *operation = get_data_1d_list(symbols, col);
 
-      if (data == NULL || operation == NULL) {
-        printf("\n");
-        return_code = 1;
-        goto cleanup;
-      }
-
       int number = atoi(data);
 
       switch (operation[0]) {
@@ -150,12 +144,6 @@ int main(int argc, char **argv) {
           if (total == 0) total += number;
           else            total *= number;
           break;
-        }
-
-        default: {
-          printf("Mismatched number of symbols and columns in input file!\n");
-          return_code = 1;
-          goto cleanup;
         }
       }
     }

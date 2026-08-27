@@ -27,7 +27,7 @@ List *new_list() {
 }
 
 char *get_data_1d_list(List *list, int index) {
-  if (is_empty(list)) 
+  if (is_empty(list) || index >= list->size) 
     return NULL;
 
   Item *pointer = list->start;
@@ -62,7 +62,7 @@ void delete_list(List *list) {
   free(list);
 }
 
-void insert_end(List *list, char data[8]) {
+void insert_end(List *list, char data[BUFFER_SIZE]) {
   Item *new = (Item *) malloc(sizeof(Item));
 
   if (new == NULL || strlen(data) >= sizeof(new->data)) {
