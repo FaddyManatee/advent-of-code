@@ -5,9 +5,12 @@
 
 #include "list.h"
 
+#define BUCKET_SIZE 128
+
 struct Item {
   Item *next;
-  char  data;
+  char  data[BUCKET_SIZE];
+  int   index;
 };
 
 struct List {
@@ -30,12 +33,15 @@ char get_data_1d_list(List *list, int index) {
   if (is_empty(list) || index >= list->size) 
     return '\0';
 
+  int list_index   = index / BUCKET_SIZE;
+  int bucket_index = index % BUCKET_SIZE;
+
   Item *pointer = list->start;
 
   int i = 0;
   while (pointer != NULL) {
-    if (i++ == index) 
-      return pointer->data;
+    if (i++ == list_index) 
+      return pointer->data[bucket_index];
     pointer = pointer->next;
   }
 
@@ -63,28 +69,35 @@ void delete_list(List *list) {
 }
 
 void insert_end(List *list, char data) {
-  Item *new = (Item *) malloc(sizeof(Item));
-
-  if (new == NULL) {
-    free(new);
+  // Insert to next free bucket space.
+  if (!is_empty(list) && list->end->index <= BUCKET_SIZE - 1) {   
+    list->end->data[list->end->index++] = data;
+    list->size++;
     return;
   }
 
-  new->data = data;
-  new->next = NULL;
+  Item *new = (Item *) malloc(sizeof(Item));
+  
+  if (new == NULL)
+    return;
+  new->index = 0;
+
+  new->data[new->index++] = data;
+  new->next               = NULL;
 
   // Insert to an empty list.
   if (is_empty(list)) {
     list->start = new;
     list->end   = new;
     list->size  = 1;
+
+    return;
   }
-  // Insert to a non-empty list.
-  else {
-    list->end->next = new;
-    list->end       = new;
-    list->size      = list->size + 1;
-  }
+
+  // No available space.
+  list->end->next = new;
+  list->end       = new;
+  list->size      = list->size + 1;
 }
 
 int list_size(List *list) {
